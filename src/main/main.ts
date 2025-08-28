@@ -35,6 +35,8 @@ let recordingWindow: BrowserWindow | null = null;
 const createWindow = (): void => {
   const bounds = store.get('windowBounds');
   
+  const isMac = process.platform === 'darwin';
+
   mainWindow = new BrowserWindow({
     width: bounds.width,
     height: bounds.height,
@@ -47,7 +49,10 @@ const createWindow = (): void => {
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.js'),
     },
-    titleBarStyle: 'hiddenInset',
+    // Custom frame on Windows/Linux, macOS keeps inset traffic lights
+    frame: isMac ? true : false,
+    titleBarStyle: isMac ? 'hiddenInset' : 'default',
+    autoHideMenuBar: true,
     backgroundColor: '#1a1a1a',
     show: false,
     icon: path.join(__dirname, '../assets/icon.png'),
@@ -65,6 +70,9 @@ const createWindow = (): void => {
   mainWindow.once('ready-to-show', () => {
     mainWindow?.show();
   });
+
+  // Ensure no legacy menu bar shows on Windows/Linux
+  mainWindow.setMenuBarVisibility(false);
 
   mainWindow.on('close', () => {
     if (mainWindow) {
@@ -128,7 +136,7 @@ app.on('window-all-closed', () => {
 ipcMain.handle('get-sources', async () => {
   try {
     const sources = await desktopCapturer.getSources({
-      types: ['window', 'screen'],
+      types: ['screen'],
       thumbnailSize: { width: 300, height: 200 },
     });
     
@@ -215,6 +223,12 @@ ipcMain.handle('close-recording-overlay', () => {
 ipcMain.handle('minimize-window', () => {
   if (mainWindow) {
     mainWindow.minimize();
+  }
+});
+
+ipcMain.handle('close-window', () => {
+  if (mainWindow) {
+    mainWindow.close();
   }
 });
 

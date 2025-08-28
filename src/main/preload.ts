@@ -23,6 +23,7 @@ export interface ElectronAPI {
   createRecordingOverlay: (bounds: { x: number; y: number; width: number; height: number }) => Promise<void>;
   closeRecordingOverlay: () => Promise<void>;
   minimizeWindow: () => Promise<void>;
+  closeWindow: () => Promise<void>;
   getAppVersion: () => Promise<string>;
 }
 
@@ -36,6 +37,7 @@ const electronAPI: ElectronAPI = {
   createRecordingOverlay: (bounds) => ipcRenderer.invoke('create-recording-overlay', bounds),
   closeRecordingOverlay: () => ipcRenderer.invoke('close-recording-overlay'),
   minimizeWindow: () => ipcRenderer.invoke('minimize-window'),
+  closeWindow: () => ipcRenderer.invoke('close-window'),
   getAppVersion: () => ipcRenderer.invoke('get-app-version'),
 };
 

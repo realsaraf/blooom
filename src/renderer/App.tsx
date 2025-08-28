@@ -291,13 +291,19 @@ const App: React.FC = () => {
   return (
     <div className="app">
       <div className="title-bar">
-        <span className="title-text">Blooom</span>
+        <div className="title-left">
+          <span className="title-text">Blooom</span>
+        </div>
+        <div className="title-right">
+          <button className="win-btn min" onClick={() => window.electronAPI.minimizeWindow()} aria-label="Minimize" />
+          <button className="win-btn close" onClick={() => window.electronAPI.closeWindow()} aria-label="Close" />
+        </div>
       </div>
       
       <div className="content">
         <div className="header">
           <div className="logo">Blooom</div>
-          <div className="subtitle">Screen Recording Made Simple</div>
+          <div className="subtitle">Screen Recording Made Simple • vibe coding love</div>
         </div>
 
         {error && (
@@ -323,9 +329,9 @@ const App: React.FC = () => {
         )}
 
         {isRecording && (
-          <div className="recording-status">
+          <div className={`recording-status ${recordingState === 'paused' ? 'paused' : ''}`}>
             <div className="recording-dot"></div>
-            <span>Recording: {formatTime(recordingTime)}</span>
+            <span>{recordingState === 'paused' ? 'Paused' : 'Recording'}: {formatTime(recordingTime)}</span>
           </div>
         )}
 

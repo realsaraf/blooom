@@ -21,6 +21,7 @@ export interface ElectronAPI {
   createRecordingOverlay: (bounds: { x: number; y: number; width: number; height: number }) => Promise<void>;
   closeRecordingOverlay: () => Promise<void>;
   minimizeWindow: () => Promise<void>;
+  closeWindow: () => Promise<void>;
   getAppVersion: () => Promise<string>;
 }
 
