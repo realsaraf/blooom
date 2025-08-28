@@ -25,6 +25,10 @@
   ],
   "author": "Blooom",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/realsaraf/blooom"
+  },
   "devDependencies": {
     "@types/node": "^20.0.0",
     "@types/react": "^18.3.24",
@@ -56,6 +60,12 @@
     "directories": {
       "output": "release"
     },
+    "publish": [
+      {
+        "provider": "github",
+        "releaseType": "release"
+      }
+    ],
     "files": [
       "dist/**/*",
       "node_modules/**/*",

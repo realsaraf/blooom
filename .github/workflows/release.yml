@@ -1,0 +1,69 @@
+name: Build and Release (Windows + macOS)
+
+on:
+  push:
+    branches: [ release ]
+  workflow_dispatch:
+
+permissions:
+  contents: write  # required for creating/updating GitHub Releases
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-and-publish:
+    name: Build and publish for ${{ matrix.target }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            target: win
+          - os: macos-latest
+            target: mac
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm install
+
+      - name: Build sources (TypeScript + Webpack)
+        run: |
+          npm run build
+
+      - name: Package and publish using electron-builder
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"  # Build unsigned artifacts
+          ELECTRON_CACHE: ${{ runner.temp }}/electron
+          ELECTRON_BUILDER_CACHE: ${{ runner.temp }}/electron-builder
+        run: |
+          if [ "${{ matrix.target }}" = "mac" ]; then
+            npx electron-builder --mac --x64 --arm64 --publish always;
+          else
+            npx electron-builder --win --publish always;
+          fi
+        shell: bash
+
+      - name: Upload release artifacts (fallback)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: blooom-${{ matrix.target }}-artifacts
+          path: |
+            release/**/*
+          if-no-files-found: ignore
