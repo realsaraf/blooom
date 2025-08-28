@@ -2,6 +2,8 @@
 
 A sleek, cross-platform screen recording application built with Electron, React, and TypeScript.
 
+<img width="422" height="723" alt="image" src="https://github.com/user-attachments/assets/0c9d26f3-1ef6-47de-a56e-fce79e8eedb0" />
+
 ## Features
 
 - 🎥 **Screen & Window Recording**: Record entire screens or specific application windows
